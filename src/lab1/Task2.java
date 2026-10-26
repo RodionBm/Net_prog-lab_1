@@ -6,11 +6,23 @@ import java.util.concurrent.*;
 
 public class Task2 
 {
-
     public static void main(String[] args) throws Exception 
     {
         Utils.printHardwareInfo();
-        Path dir = Paths.get(args.length > 0 ? args[0] : "parts");
+        String folder = "parts";
+        int onlyThreads = 0;
+        for (int i = 0; i < args.length; i++) 
+        {
+            if (args[i].equals("--only") && i + 1 < args.length) 
+            {
+                onlyThreads = Integer.parseInt(args[++i]);
+            } 
+            else 
+            {
+                folder = args[i];
+            }
+        }
+        Path dir = Paths.get(folder);
         Path[] files = new Path[8];
         for (int i = 0; i < 8; i++) 
             files[i] = dir.resolve("part" + i + ".txt");
@@ -22,8 +34,11 @@ public class Task2
                 return;
             }
         }
-        int[] threadCounts = {1, 2, 4};
-        System.out.printf("%-8s %-12s %-14s %-14s%n", "threads", "time(ms)", "counts", "peakMem(MB)");
+        int[] threadCounts = (onlyThreads > 0)
+                ? new int[]{ onlyThreads }
+                : new int[]{ 1, 2, 4 };
+        System.out.printf("%-8s %-12s %-14s %-14s%n",
+                "threads", "time(ms)", "counts", "peakMem(MB)");
         for (int n : threadCounts) 
             runOnce(files, n);
     }
@@ -36,7 +51,8 @@ public class Task2
         CountDownLatch done = new CountDownLatch(nThreads);
         long[] peakMem = {0};
         BlockingQueue<Integer> fileQueue = new LinkedBlockingQueue<>();
-        for (int i = 0; i < files.length; i++) fileQueue.add(i);
+        for (int i = 0; i < files.length; i++) 
+            fileQueue.add(i);
         long t0 = System.nanoTime();
         for (int t = 0; t < nThreads; t++) 
         {
@@ -73,7 +89,9 @@ public class Task2
         for (Utils.Counts c : perThread) 
             if (c != null) 
                 total.add(c);
-        System.out.printf("%-8d %-12d %-14s %-14d%n", nThreads, elapsedMs, "n=" + total.neg + " p=" + total.pos + " z=" + total.zero, peakMem[0] - baseMem);
+        System.out.printf("%-8d %-12d %-14s %-14d%n", nThreads, elapsedMs,
+                "n=" + total.neg + " p=" + total.pos + " z=" + total.zero,
+                peakMem[0] - baseMem);
     }
 
     static Utils.Counts readOneFile(Path p) throws IOException 
@@ -84,19 +102,22 @@ public class Task2
         boolean negative = false;
         boolean hasDigit = false;
         for (byte b : buf) 
-            {
+        {
             if (b == '\n' || b == '\r') 
             {
                 if (hasDigit) 
                 {
                     long v = negative ? -num : num;
-                    if (v < 0) c.neg++;
-                    else if (v > 0) c.pos++;
-                    else c.zero++;
+                    if (v < 0) 
+                        c.neg++;
+                    else if (v > 0) 
+                        c.pos++;
+                    else 
+                        c.zero++;
                 }
                 num = 0; negative = false; hasDigit = false;
             } 
-            else if (b == '-')
+            else if (b == '-') 
             {
                 negative = true;
             } 

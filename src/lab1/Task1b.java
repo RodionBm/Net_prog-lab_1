@@ -6,7 +6,6 @@ import java.util.concurrent.locks.*;
 
 public class Task1b 
 {
-
     static int[] data;
 
     public static void main(String[] args) throws Exception 
@@ -53,7 +52,8 @@ public class Task1b
             String line;
             while ((line = r.readLine()) != null) 
             {
-                if (i >= arr.length) break;
+                if (i >= arr.length) 
+                    break;
                 arr[i++] = Utils.parse(line);
             }
         }
@@ -73,9 +73,12 @@ public class Task1b
                 for (int i = s; i < e; i++) 
                 {
                     int v = data[i];
-                    if (v < 0) shared.neg++;
-                    else if (v > 0) shared.pos++;
-                    else shared.zero++;
+                    if (v < 0) 
+                        shared.neg++;
+                    else if (v > 0) 
+                        shared.pos++;
+                    else 
+                        shared.zero++;
                 }
             });
             threads[t].start();
@@ -100,9 +103,12 @@ public class Task1b
                     lock.lock();
                     try 
                     {
-                        if (v < 0) shared.neg++;
-                        else if (v > 0) shared.pos++;
-                        else shared.zero++;
+                        if (v < 0) 
+                            shared.neg++;
+                        else if (v > 0) 
+                            shared.pos++;
+                        else 
+                            shared.zero++;
                     } 
                     finally 
                     { 
@@ -131,29 +137,34 @@ public class Task1b
                 for (int i = s; i < e; i++) 
                 {
                     int v = data[i];
-                    if (v < 0) c.neg++;
-                    else if (v > 0) c.pos++;
-                    else c.zero++;
+                    if (v < 0) 
+                        c.neg++;
+                    else if (v > 0) 
+                        c.pos++;
+                    else 
+                        c.zero++;
                 }
                 local[idx] = c;
             });
             threads[t].start();
         }
         joinAll(threads);
-        for (Utils.Counts c : local) if (c != null) shared.add(c);
+        for (Utils.Counts c : local) 
+            if (c != null) 
+                shared.add(c);
     }
 
     static void joinAll(Thread[] ts) 
     {
         for (Thread t : ts) 
         {
-            try
+            try 
             { 
                 t.join(); 
             } 
             catch (InterruptedException ignored) 
             {
-                
+
             }
         }
     }

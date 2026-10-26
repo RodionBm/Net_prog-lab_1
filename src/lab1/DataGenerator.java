@@ -6,7 +6,6 @@ import java.util.Random;
 
 public class DataGenerator 
 {
-
     public static void main(String[] args) throws IOException 
     {
         generate();
@@ -40,7 +39,7 @@ public class DataGenerator
         Path dir = Paths.get("parts");
         Files.createDirectories(dir);
         System.out.println("Splitting into 8 files of 625000 numbers each ...");
-        final int LINES_PER_PART = 625_000;
+        final int LINES_PER_PART = 6_250_000;
         try (BufferedReader r = Files.newBufferedReader(Paths.get(Utils.FILE))) 
         {
             for (int part = 0; part < 8; part++) 
@@ -51,8 +50,7 @@ public class DataGenerator
                     for (int i = 0; i < LINES_PER_PART; i++) 
                     {
                         String line = r.readLine();
-                        if (line == null) 
-                            throw new IOException("Input file too short");
+                        if (line == null) throw new IOException("Input file too short");
                         w.write(line);
                         w.write('\n');
                     }
